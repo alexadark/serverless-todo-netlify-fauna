@@ -58,7 +58,8 @@ export default () => {
   const [todos, dispatch] = useReducer(todosReducer, [])
   const [addTodo] = useMutation(ADD_TODO)
   const [updateTodoDone] = useMutation(UPDATE_TODO_DONE)
-  const { loading, error, data } = useQuery(GET_TODOS)
+  const { loading, error, data, refetch } = useQuery(GET_TODOS)
+  console.log(data)
 
   return (
     <Container>
@@ -83,10 +84,11 @@ export default () => {
       </Flex>
       <Flex
         as="form"
-        onSubmit={e => {
+        onSubmit={async e => {
           e.preventDefault()
-          addTodo({ variables: { text: inputRef.current.value } })
+          await addTodo({ variables: { text: inputRef.current.value } })
           inputRef.current.value = ""
+          await refetch()
         }}
       >
         <Label sx={{ display: "flex" }}>
@@ -102,13 +104,14 @@ export default () => {
           <ul sx={{ listStyleType: "none" }}>
             {data.todos.map(todo => (
               <Flex
+                key={todo.id}
                 as="li"
                 onClick={e => {
                   updateTodoDone({ variables: { id: todo.id } })
                 }}
               >
                 <Checkbox checked={todo.done} />
-                <span>{todo.value}</span>
+                <span>{todo.text}</span>
               </Flex>
             ))}
           </ul>
