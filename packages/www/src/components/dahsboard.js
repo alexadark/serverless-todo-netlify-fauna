@@ -106,8 +106,10 @@ export default () => {
               <Flex
                 key={todo.id}
                 as="li"
-                onClick={e => {
-                  updateTodoDone({ variables: { id: todo.id } })
+                onClick={async () => {
+                  await updateTodoDone({ variables: { id: todo.id } })
+                  console.log("refetching")
+                  await refetch()
                 }}
               >
                 <Checkbox checked={todo.done} />
